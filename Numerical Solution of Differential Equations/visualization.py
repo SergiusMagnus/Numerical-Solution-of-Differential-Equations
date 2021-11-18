@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import pathlib
 
 
 def visualize_solution(visualization_data, file_path):
@@ -11,10 +10,9 @@ def visualize_solution(visualization_data, file_path):
     title = visualization_data["title"]
 
     plt.plot(x, y)
-    plt.title(title)
-    x_label = ''.join([x_name, ' (step = ', str(step), ')'])
-    plt.xlabel(x_label)
+    plt.title(''.join([title, '\n', ' (step = ', str(step), ')']))
+    plt.xlabel(x_name)
     plt.ylabel(y_name)
 
-    # plt.savefig(file_path)
+    plt.savefig(file_path)
     plt.show()
