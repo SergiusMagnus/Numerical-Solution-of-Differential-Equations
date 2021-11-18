@@ -5,6 +5,8 @@ import sympy as sp
 
 
 def calculate_value(problem_data):
+    calculate_value.title = 'Backward Euler Method'
+
     number_of_equations = problem_data["number_of_equations"]
     M = problem_data["M"]
     f = problem_data["f"]
