@@ -12,7 +12,7 @@ Ub = 6
 
 M = np.array([[-C1, C1, 0., 0., 0.],
               [C1, -C1, 0., 0., 0.],
-              [0., 0., C2, 0., 0.],
+              [0., 0., -C2, 0., 0.],
               [0., 0., 0., -C3, C3],
               [0., 0., 0., C3, -C3]])
 
@@ -34,7 +34,7 @@ def DAE(args):
     t, U1, U2, U3, U4, U5 = args
 
     f1 = U1 / R0 - Ue(t) / R0
-    f2 = U2 * (1 / R1 + 1 / R2) + 0.01 * f(U2 - U3) - Ub / R2
+    f2 = U2 * (1. / R1 + 1. / R2) + 0.01 * f(U2 - U3) - Ub / R2
     f3 = U3 / R3 - f(U2 - U3)
     f4 = U4 / R4 + 0.99 * f(U2 - U3) - Ub / R4
     f5 = U5 / R5
@@ -51,4 +51,7 @@ def get_initial_condition():
 
 
 def get_problem_data():
-    return get_number_of_equations, M, DAE, get_initial_condition
+    return {"number_of_equations": get_number_of_equations(),
+            "M": M,
+            "f": DAE,
+            "get_initial_condition": get_initial_condition}
