@@ -15,8 +15,8 @@ def calculate_value(problem_data):
     step = problem_data["step"]
     next_x = problem_data["next_x"]
 
-    next_y = [sp.symbols('next_y' + str(i + 1)) for i in range(number_of_equations)]
-    next_value = [next_x] + next_y
+    next_y = np.array([sp.symbols('next_y' + str(i + 1)) for i in range(number_of_equations)])
+    next_value = np.concatenate(([next_x], next_y))
     next_f = f(next_value)
 
     current_f = f(current_value)
@@ -25,6 +25,6 @@ def calculate_value(problem_data):
                     np.sum(M[i] * current_y) + 0.5 * step * (current_f[i] + next_f[i]))
               for i in range(number_of_equations)]
 
-    next_y = sp.nsolve(system, next_y, approximate_solution)
+    next_y = np.array(sp.nsolve(system, next_y, approximate_solution))[:, 0]
 
     return next_y

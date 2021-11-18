@@ -27,6 +27,6 @@ def calculate_solution(problem_data, method, x_data):
                                    "next_x": x[i + 1]}
         next_y = method(problem_data_for_method)
 
-        y[:, i + 1] = next_y[:]
+        y[:, i + 1] = next_y
 
     return x, y
