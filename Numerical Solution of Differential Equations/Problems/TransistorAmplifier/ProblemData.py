@@ -39,7 +39,9 @@ def DAE(args):
     f4 = U4 / R4 + 0.99 * f(U2 - U3) - Ub / R4
     f5 = U5 / R5
 
-    return f1, f2, f3, f4, f5
+    equations = np.array([f1, f2, f3, f4, f5])
+
+    return equations
 
 
 def get_initial_condition():
