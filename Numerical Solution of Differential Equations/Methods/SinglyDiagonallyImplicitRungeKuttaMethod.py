@@ -4,18 +4,29 @@ import numpy as np
 import sympy as sp
 
 
+def set_gamma(trigger):
+    if trigger == 'Plus':
+        return (3 + 3 ** (1 / 2)) / 6
+    else:
+        return (3 - 3 ** (1 / 2)) / 6
+
+
+gamma = set_gamma('Plus')
+
+a = np.array([[gamma, 0.],
+              [1 - 2 * gamma, gamma]])
+
+c = np.sum(a, axis=1)
+
+b = np.array([0.5, 0.5])
+
+stages_number = b.size
+
+
 def calculate_value(problem_data):
     calculate_value.title = 'Singly Diagonally Implicit Runge-Kutta Method'
 
-    def set_gamma(trigger):
-        if trigger == 'Plus':
-            return (3 + 3 ** (1 / 2)) / 6
-        else:
-            return (3 - 3 ** (1 / 2)) / 6
-
-    gamma = set_gamma('Plus')
-
-    number_of_equations = problem_data["number_of_equations"]
+    equations_number = problem_data["equations_number"]
     M = problem_data["M"]
     f = problem_data["f"]
     current_value = problem_data["current_value"]
@@ -26,35 +37,27 @@ def calculate_value(problem_data):
     approximate_solution = f(current_value)
 
     def calculate_k():
-        # first stage
-        k1 = np.array([sp.symbols('k1_' + str(i + 1)) for i in range(number_of_equations)])
+        k = np.array([sp.symbols('k1_' + str(i + 1)) for i in range(equations_number)]
+                     + [sp.symbols('k2_' + str(i + 1)) for i in range(equations_number)])\
+            .reshape(stages_number, equations_number)
 
-        args = np.concatenate(([current_x + gamma * step], current_y + gamma * step * k1))
+        for i in range(stages_number):
+            args = np.concatenate(([current_x + c[i] * step],
+                                   current_y + step *
+                                   (np.array([a[i] * k[:, j] for j in range(equations_number)]))
+                                   .sum(axis=1)))
 
-        intermediate_f = f(args)
+            intermediate_f = f(args)
 
-        system = [sp.Eq(np.sum(M[i] * k1), intermediate_f[i])
-                  for i in range(number_of_equations)]
+            system = [sp.Eq(np.sum(M[j] * k[i]), intermediate_f[j])
+                      for j in range(equations_number)]
 
-        k1 = np.array(sp.nsolve(system, k1, approximate_solution))[:, 0]
+            k[i] = np.array(sp.nsolve(system, k[i], approximate_solution))[:, 0]
 
-        # second stage
-        k2 = np.array([sp.symbols('k2_' + str(i + 1)) for i in range(number_of_equations)])
+        return k
 
-        args = np.concatenate(([current_x + (1 - gamma) * step],
-                               current_y + (1 - 2 * gamma) * step * k1 + gamma * step * k2))
+    k = calculate_k()
 
-        intermediate_f = f(args)
-
-        system = [sp.Eq(np.sum(M[i] * k2), intermediate_f[i])
-                  for i in range(number_of_equations)]
-
-        k2 = np.array(sp.nsolve(system, k2, approximate_solution))[:, 0]
-
-        return k1, k2
-
-    k1, k2 = calculate_k()
-
-    next_y = current_y + step * (0.5 * k1 + 0.5 * k2)
+    next_y = current_y + step * (np.array([b * k[:, i] for i in range(equations_number)])).sum(axis=1)
 
     return next_y

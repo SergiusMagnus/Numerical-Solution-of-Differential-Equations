@@ -7,6 +7,7 @@ from Methods.BackwardEulerMethod import calculate_value as Backward_Euler_Method
 from Methods.ImplicitTrapezoidalRuleMethod import calculate_value as Implicit_Trapezoidal_Rule_Method
 from Methods.SinglyDiagonallyImplicitRungeKuttaMethod \
     import calculate_value as Singly_Diagonally_Implicit_Runge_Kutta_Method
+from Methods.RosenbrockMethod import calculate_value as Rosenbrock_Method
 
 from Problems.StiffEquation.ProblemData import get_problem_data as get_SE_data
 from Problems.ChemicalReactions.ProblemData import get_problem_data as get_SDE_1_data
@@ -16,7 +17,8 @@ from Problems.TransistorAmplifier.ProblemData import get_problem_data as get_DAE
 
 methods = {"BEM": Backward_Euler_Method,
            "ITRM": Implicit_Trapezoidal_Rule_Method,
-           "SDIRKM": Singly_Diagonally_Implicit_Runge_Kutta_Method}
+           "SDIRKM": Singly_Diagonally_Implicit_Runge_Kutta_Method,
+           "ROS": Rosenbrock_Method}
 
 
 def solve_SE(start, end, step, method):

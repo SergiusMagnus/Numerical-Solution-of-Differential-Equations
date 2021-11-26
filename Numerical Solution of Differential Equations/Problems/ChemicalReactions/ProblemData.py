@@ -7,7 +7,7 @@ M = np.array([[1., 0., 0.],
               [0., 0., 1.]])
 
 
-def get_number_of_equations():
+def get_equations_number():
     return 3
 
 
@@ -31,7 +31,7 @@ def get_initial_condition():
 
 
 def get_problem_data():
-    return {"number_of_equations": get_number_of_equations(),
+    return {"equations_number": get_equations_number(),
             "M": M,
             "f": SDE,
             "get_initial_condition": get_initial_condition}

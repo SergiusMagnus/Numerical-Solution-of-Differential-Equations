@@ -2,7 +2,7 @@ import numpy as np
 
 
 def calculate_solution(problem_data, method, x_data):
-    number_of_equations = problem_data["number_of_equations"]
+    equations_number = problem_data["equations_number"]
     get_initial_condition = problem_data["get_initial_condition"]
 
     start_x = x_data["start"]
@@ -10,8 +10,8 @@ def calculate_solution(problem_data, method, x_data):
     step_x = x_data["step"]
 
     x = np.arange(start_x, end_x, step_x)
-    y = np.zeros((number_of_equations, len(x)))
-    args = np.zeros(number_of_equations + 1)
+    y = np.zeros((equations_number, len(x)))
+    args = np.zeros(equations_number + 1)
 
     y[:, 0] = get_initial_condition()
 
@@ -19,7 +19,7 @@ def calculate_solution(problem_data, method, x_data):
         args[0] = x[i]
         args[1:] = y[:, i]
 
-        problem_data_for_method = {"number_of_equations": number_of_equations,
+        problem_data_for_method = {"equations_number": equations_number,
                                    "M": problem_data["M"],
                                    "f": problem_data["f"],
                                    "current_value": args,
