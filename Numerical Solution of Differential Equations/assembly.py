@@ -3,6 +3,8 @@ import pathlib
 from calculation import calculate_solution
 from visualization import visualize_solution
 
+from Methods.EulerMethod import calculate_value as Euler_Method
+from Methods.RungeKuttaMethod import calculate_value as Runge_Kutta_Method
 from Methods.BackwardEulerMethod import calculate_value as Backward_Euler_Method
 from Methods.ImplicitTrapezoidalRuleMethod import calculate_value as Implicit_Trapezoidal_Rule_Method
 from Methods.SinglyDiagonallyImplicitRungeKuttaMethod \
@@ -15,7 +17,9 @@ from Problems.ElectricalDiagram.ProblemData import get_problem_data as get_SDE_2
 from Problems.TransistorAmplifier.ProblemData import get_problem_data as get_DAE_data
 
 
-methods = {"BEM": Backward_Euler_Method,
+methods = {"EM": Euler_Method,
+           "RK4": Runge_Kutta_Method,
+           "BEM": Backward_Euler_Method,
            "ITRM": Implicit_Trapezoidal_Rule_Method,
            "SDIRKM": Singly_Diagonally_Implicit_Runge_Kutta_Method,
            "ROS": Rosenbrock_Method}
