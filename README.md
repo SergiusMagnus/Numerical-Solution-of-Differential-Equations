@@ -4,7 +4,7 @@ This repository implements various numerical methods
 for solving systems of differential equations. 
 This project has been implemented 
 within the framework of research activities.
-___
+
 ## Implemented Methods:
 * Euler Method
 * Classical Runge-Kutta Method 
