@@ -1,7 +1,7 @@
 """ Differential-algebraic System of Equations """
 
 import numpy as np
-import sympy as sp
+import sympy as smp
 
 R = np.array([1000.] + [9000.] * 5)
 R0, R1, R2, R3, R4, R5 = R
@@ -24,7 +24,7 @@ def f(arg):
 
 
 def Ue(t):
-    return 0.4 * sp.sin(200 * np.pi * t)
+    return 0.4 * smp.sin(200 * np.pi * t)
 
 
 def get_equations_number():

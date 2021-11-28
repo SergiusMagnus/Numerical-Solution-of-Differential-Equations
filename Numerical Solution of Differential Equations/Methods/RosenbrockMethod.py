@@ -1,19 +1,19 @@
 """ Rosenbrock Method """
 
 import numpy as np
-import sympy as sp
+import sympy as smp
 
 alfa = np.array([[1., 0.],
                  [0.5, 0.5]])
 
-alfa_sum = np.array([np.sum(alfa[i][:i]) for i in range(len(alfa[0]))])
-
 gamma = np.array([[1., 0.],
                   [-1., 1.]])
 
-gamma_sum = np.sum(gamma, axis=1)
-
 b = np.array([-0.5, 1.5])
+
+alfa_sum = np.array([np.sum(alfa[i][:i]) for i in range(len(alfa[0]))])
+
+gamma_sum = np.sum(gamma, axis=1)
 
 stages_number = b.size
 
@@ -34,9 +34,9 @@ def calculate_value(problem_data):
     global jacobian
 
     def calculate_jacobian():
-        args = np.array([sp.symbols('arg_' + str(i + 1)) for i in range(equations_number + 1)])
+        args = np.array([smp.symbols('arg_' + str(i + 1)) for i in range(equations_number + 1)])
 
-        jacobian = sp.Matrix(f(args)).jacobian(args)
+        jacobian = smp.Matrix(f(args)).jacobian(args)
 
         args_value = current_value
         args_value_tuples = [(args[i], args_value[i]) for i in range(equations_number + 1)]
@@ -51,9 +51,9 @@ def calculate_value(problem_data):
     approximate_solution = f(current_value)
 
     def calculate_k():
-        k = np.array([sp.symbols('k1_' + str(i + 1)) for i in range(equations_number)]
-                     + [sp.symbols('k2_' + str(i + 1)) for i in range(equations_number)]) \
-            .reshape(stages_number, equations_number)
+        k = np.array([smp.symbols('k' + str(i + 1) + '_' + str(j + 1))
+                      for i in range(stages_number) for j in range(equations_number)]) \
+                     .reshape(stages_number, equations_number)
 
         for i in range(stages_number):
             args = np.concatenate(([current_x + alfa_sum[i] * step],
@@ -63,13 +63,13 @@ def calculate_value(problem_data):
 
             intermediate_f = f(args)
 
-            system = [sp.Eq(np.sum(M[j] * k[i]), step * intermediate_f[j]
-                            + gamma_sum[i] * (step ** 2) * jacobian[:, 0][j]
-                            + step * np.sum(jacobian[:, 1:][j]) *
-                            (np.sum(gamma[i] * k[:, j])))
+            system = [smp.Eq(np.sum(M[j] * k[i]), step * intermediate_f[j]
+                             + gamma_sum[i] * (step ** 2) * jacobian[:, 0][j]
+                             + step * np.sum(jacobian[:, 1:][j]) *
+                             (np.sum(gamma[i] * k[:, j])))
                       for j in range(equations_number)]
 
-            k[i] = np.array(sp.nsolve(system, k[i], approximate_solution))[:, 0]
+            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution))[:, 0]
 
         return k
 

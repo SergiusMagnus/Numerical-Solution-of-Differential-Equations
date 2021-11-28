@@ -1,7 +1,7 @@
 """ Stiff Equation """
 
 import numpy as np
-import sympy as sp
+import sympy as smp
 
 M = np.array([1.])
 
@@ -13,7 +13,7 @@ def get_equations_number():
 def SE(args):
     x, y = args
 
-    f = -50 * (y - sp.cos(x))
+    f = -50 * (y - smp.cos(x))
 
     equations = np.array([f])
 

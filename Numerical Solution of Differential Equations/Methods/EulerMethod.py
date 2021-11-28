@@ -1,5 +1,6 @@
 """ Euler Method """
 
+
 def calculate_value(problem_data):
     calculate_value.title = 'Euler Method'
 

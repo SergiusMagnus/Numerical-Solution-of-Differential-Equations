@@ -1,7 +1,7 @@
 """ Implicit Trapezoidal Rule Method """
 
 import numpy as np
-import sympy as sp
+import sympy as smp
 
 
 def calculate_value(problem_data):
@@ -15,16 +15,16 @@ def calculate_value(problem_data):
     step = problem_data["step"]
     next_x = problem_data["next_x"]
 
-    next_y = np.array([sp.symbols('next_y' + str(i + 1)) for i in range(equations_number)])
+    next_y = np.array([smp.symbols('next_y' + str(i + 1)) for i in range(equations_number)])
     next_value = np.concatenate(([next_x], next_y))
     next_f = f(next_value)
 
     current_f = f(current_value)
 
-    system = [sp.Eq(np.sum(M[i] * next_y),
-                    np.sum(M[i] * current_y) + 0.5 * step * (current_f[i] + next_f[i]))
+    system = [smp.Eq(np.sum(M[i] * next_y),
+                     np.sum(M[i] * current_y) + 0.5 * step * (current_f[i] + next_f[i]))
               for i in range(equations_number)]
 
-    next_y = np.array(sp.nsolve(system, next_y, approximate_solution))[:, 0]
+    next_y = np.array(smp.nsolve(system, next_y, approximate_solution))[:, 0]
 
     return next_y

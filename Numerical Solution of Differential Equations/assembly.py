@@ -18,11 +18,11 @@ from Problems.TransistorAmplifier.ProblemData import get_problem_data as get_DAE
 
 
 methods = {"EM": Euler_Method,
-           "RK4": Runge_Kutta_Method,
+           "RKM": Runge_Kutta_Method,
            "BEM": Backward_Euler_Method,
            "ITRM": Implicit_Trapezoidal_Rule_Method,
            "SDIRKM": Singly_Diagonally_Implicit_Runge_Kutta_Method,
-           "ROS": Rosenbrock_Method}
+           "ROSM": Rosenbrock_Method}
 
 
 def solve_SE(start, end, step, method):
