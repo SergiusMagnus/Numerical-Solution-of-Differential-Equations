@@ -1,7 +1,4 @@
-from assembly import solve_SE
-from assembly import solve_SDE_1
-from assembly import solve_SDE_2
-from assembly import solve_DAE
+from assembly import solve_SE, solve_SDE_1, solve_SDE_2, solve_DAE
 
 """
 Methods:
@@ -14,7 +11,7 @@ Methods:
 """
 
 if __name__ == '__main__':
-    # solve_SE(start=0., end=1.5, step=0.04, method="EM")
+    # solve_SE(start=0., end=1.5, step=0.01, method="EM")
     # solve_SE(start=0., end=1.5, step=0.01, method="RKM")
     # solve_SE(start=0., end=1.5, step=0.01, method="BEM")
     # solve_SE(start=0., end=1.5, step=0.01, method="ITRM")

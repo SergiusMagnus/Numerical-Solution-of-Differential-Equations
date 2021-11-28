@@ -3,19 +3,17 @@ import pathlib
 from calculation import calculate_solution
 from visualization import visualize_solution
 
-from Methods.EulerMethod import calculate_value as Euler_Method
-from Methods.RungeKuttaMethod import calculate_value as Runge_Kutta_Method
-from Methods.BackwardEulerMethod import calculate_value as Backward_Euler_Method
-from Methods.ImplicitTrapezoidalRuleMethod import calculate_value as Implicit_Trapezoidal_Rule_Method
-from Methods.SinglyDiagonallyImplicitRungeKuttaMethod \
-    import calculate_value as Singly_Diagonally_Implicit_Runge_Kutta_Method
-from Methods.RosenbrockMethod import calculate_value as Rosenbrock_Method
+from Methods import Euler_Method, \
+                    Runge_Kutta_Method, \
+                    Backward_Euler_Method, \
+                    Implicit_Trapezoidal_Rule_Method,\
+                    Singly_Diagonally_Implicit_Runge_Kutta_Method, \
+                    Rosenbrock_Method
 
-from Problems.StiffEquation.ProblemData import get_problem_data as get_SE_data
-from Problems.ChemicalReactions.ProblemData import get_problem_data as get_SDE_1_data
-from Problems.ElectricalDiagram.ProblemData import get_problem_data as get_SDE_2_data
-from Problems.TransistorAmplifier.ProblemData import get_problem_data as get_DAE_data
-
+from Problems import get_SE_data,\
+                     get_SDE_1_data, \
+                     get_SDE_2_data, \
+                     get_DAE_data
 
 methods = {"EM": Euler_Method,
            "RKM": Runge_Kutta_Method,
