@@ -24,7 +24,8 @@ def calculate_solution(problem_data, method, x_data):
                                    "f": problem_data["f"],
                                    "current_value": args,
                                    "step": step_x,
-                                   "next_x": x[i + 1]}
+                                   "next_x": x[i + 1],
+                                   "need_to_calculate_jacobian": not i}
         next_y = method(problem_data_for_method)
 
         y[:, i + 1] = next_y

@@ -17,7 +17,7 @@ gamma_sum = np.sum(gamma, axis=1)
 
 stages_number = b.size
 
-jacobian = None
+symbolic_jacobian = None
 
 
 def calculate_value(problem_data):
@@ -30,23 +30,19 @@ def calculate_value(problem_data):
     current_x = current_value[0]
     current_y = current_value[1:]
     step = problem_data["step"]
+    need_to_calculate_jacobian = problem_data["need_to_calculate_jacobian"]
 
-    global jacobian
+    global symbolic_jacobian
 
-    def calculate_jacobian():
-        args = np.array([smp.symbols('arg_' + str(i + 1)) for i in range(equations_number + 1)])
+    args = np.array([smp.symbols('arg_' + str(i + 1)) for i in range(equations_number + 1)])
 
-        jacobian = smp.Matrix(f(args)).jacobian(args)
+    if need_to_calculate_jacobian:
+        symbolic_jacobian = smp.Matrix(f(args)).jacobian(args)
 
-        args_value = current_value
-        args_value_tuples = [(args[i], args_value[i]) for i in range(equations_number + 1)]
+    args_value = current_value
+    args_value_tuples = zip(args, args_value)
 
-        jacobian_at_point = np.array(jacobian.subs(args_value_tuples))
-
-        return jacobian_at_point
-
-    if jacobian is None:
-        jacobian = calculate_jacobian()
+    jacobian_at_point = np.array(symbolic_jacobian.subs(args_value_tuples))
 
     approximate_solution = f(current_value)
 
@@ -63,10 +59,11 @@ def calculate_value(problem_data):
 
             intermediate_f = f(args)
 
+            gamma_times_k_sum = np.dot(gamma[i], k)
+
             system = [smp.Eq(np.sum(M[j] * k[i]), step * intermediate_f[j]
-                             + gamma_sum[i] * (step ** 2) * jacobian[:, 0][j]
-                             + step * np.sum(jacobian[:, 1:][j]) *
-                             (np.sum(gamma[i] * k[:, j])))
+                             + gamma_sum[i] * (step ** 2) * jacobian_at_point[:, 0][j]
+                             + step * np.sum(jacobian_at_point[j, 1:] * gamma_times_k_sum))
                       for j in range(equations_number)]
 
             k[i] = np.array(smp.nsolve(system, k[i], approximate_solution))[:, 0]
