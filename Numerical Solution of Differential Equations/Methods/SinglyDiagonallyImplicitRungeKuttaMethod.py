@@ -52,7 +52,7 @@ def calculate_value(problem_data):
             system = [smp.Eq(np.sum(M[j] * k[i]), intermediate_f[j])
                       for j in range(equations_number)]
 
-            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution))[:, 0]
+            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution, verify=False))[:, 0]
 
         return k
 

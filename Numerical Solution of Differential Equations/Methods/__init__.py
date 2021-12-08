@@ -1,4 +1,4 @@
-from .BackwardEulerMethod import calculate_value as Euler_Method
+from .EulerMethod import calculate_value as Euler_Method
 from .RungeKuttaMethod import calculate_value as Runge_Kutta_Method
 from .BackwardEulerMethod import calculate_value as Backward_Euler_Method
 from .ImplicitTrapezoidalRuleMethod import calculate_value as Implicit_Trapezoidal_Rule_Method

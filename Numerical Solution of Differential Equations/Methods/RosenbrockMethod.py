@@ -3,13 +3,13 @@
 import numpy as np
 import sympy as smp
 
-alfa = np.array([[1., 0.],
-                 [0.5, 0.5]])
+alfa = np.array([[-1., 0.],
+                 [1.5, -0.5]])
 
 gamma = np.array([[1., 0.],
                   [-1., 1.]])
 
-b = np.array([-0.5, 1.5])
+b = np.array([0.5, 0.5])
 
 alfa_sum = np.array([np.sum(alfa[i][:i]) for i in range(len(alfa[0]))])
 
@@ -66,7 +66,7 @@ def calculate_value(problem_data):
                              + step * np.sum(jacobian_at_point[j, 1:] * gamma_times_k_sum))
                       for j in range(equations_number)]
 
-            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution))[:, 0]
+            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution, verify=False))[:, 0]
 
         return k
 
