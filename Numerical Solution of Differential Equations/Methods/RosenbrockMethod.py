@@ -2,14 +2,42 @@
 
 import numpy as np
 import sympy as smp
+import pathlib
 
-alfa = np.array([[-1., 0.],
-                 [1.5, -0.5]])
+# alfa = np.array([[-1., 0.],
+#                  [1.5, -0.5]])
+#
+# gamma = np.array([[1., 0.],
+#                   [-1., 1.]])
+#
+# b = np.array([0.5, 0.5])
 
-gamma = np.array([[1., 0.],
-                  [-1., 1.]])
 
-b = np.array([0.5, 0.5])
+# 3
+# alfa = np.array([[-0.4714, 0.],
+#                  [1.4714, -0.4714]])
+#
+# gamma = np.array([[0.80474, 0.],
+#                   [-0.80474, 0.80474]])
+#
+# b = np.array([0.66666, 0.33334])
+
+# 2
+# alfa = np.array([[1/4, 0.],
+#                  [3/4, 1/4]])
+#
+# gamma = np.array([[0.0428932, 0.],
+#                   [-0.0428932, 0.0428932]])
+#
+# b = np.array([0.707107, 0.292893])
+
+path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/alfa.csv')
+alfa = np.loadtxt(path)
+path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/gamma.csv')
+gamma = np.loadtxt(path)
+path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/b.csv')
+b = np.loadtxt(path)
+
 
 alfa_sum = np.array([np.sum(alfa[i][:i]) for i in range(len(alfa[0]))])
 
@@ -44,8 +72,6 @@ def calculate_value(problem_data):
 
     jacobian_at_point = np.array(symbolic_jacobian.subs(args_value_tuples))
 
-    approximate_solution = f(current_value)
-
     def calculate_k():
         k = np.array([smp.symbols('k' + str(i + 1) + '_' + str(j + 1))
                       for i in range(stages_number) for j in range(equations_number)]) \
@@ -66,7 +92,7 @@ def calculate_value(problem_data):
                              + step * np.sum(jacobian_at_point[j, 1:] * gamma_times_k_sum))
                       for j in range(equations_number)]
 
-            k[i] = np.array(smp.nsolve(system, k[i], approximate_solution, verify=False))[:, 0]
+            k[i] = np.array(*smp.linsolve(system, *k[i]))
 
         return k
 
