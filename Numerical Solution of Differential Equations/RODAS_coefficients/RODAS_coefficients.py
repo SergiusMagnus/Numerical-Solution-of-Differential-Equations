@@ -15,11 +15,10 @@ gamma_ij = np.array([np.nan for i in range(s * s)]).reshape(s, s)
 
 def set_initial_values():
     for i in range(s):
-        for j in range(i + 1, s):
-            if j == i + 1:
-                alfa_ij[i, j - 1] = 0.
+        for j in range(i, s):
             alfa_ij[i, j] = 0.
-            beta_ij[i, j] = 0.
+            if j != s:
+                beta_ij[i, j] = 0.
 
     alfa_i[0] = 0.
     alfa_i[1] = 0.386
@@ -30,7 +29,7 @@ def set_initial_values():
 
     alfa_ij[1, 0] = alfa_i[1]
 
-    beta_i[0] = 0
+    beta_i[0] = 0.
     beta_i[1] = 0.0317
     beta_i[2] = 0.0635
     beta_i[3] = 0.3438
@@ -48,10 +47,10 @@ def step_1():
 
     eqns = [b0 + b1 + b2 + b3 + b4 + b[5] - 1,
             b1 * beta_i[1] + b2 * beta_i[2] + b3 * beta_i[3] + (b4 + b[5]) * (1 - gamma) - 1/2 + gamma,
-            b1 * pow(alfa_i[1], 2) + b2 * pow(alfa_i[2], 2) + b3 * pow(alfa_i[3], 2) + b4 + b[5] - 1/3,
-            b1 * pow(alfa_i[1], 3) + b2 * pow(alfa_i[2], 3) + b3 * pow(alfa_i[3], 3) + b4 + b[5] - 1/4,
-            b0 * pow(alfa_i[0], 4) + b1 * pow(alfa_i[1], 4) + b2 * pow(alfa_i[2], 4) +
-            b3 * pow(alfa_i[3], 4) + b4 * pow(alfa_i[4], 4) + b[5] * pow(alfa_i[5], 4) - 1/5]
+            b1 * alfa_i[1] ** 2 + b2 * alfa_i[2] ** 2 + b3 * alfa_i[3] ** 2 + b4 + b[5] - 1/3,
+            b1 * alfa_i[1] ** 3 + b2 * alfa_i[2] ** 3 + b3 * alfa_i[3] ** 3 + b4 + b[5] - 1/4,
+            b0 * alfa_i[0] ** 4 + b1 * alfa_i[1] ** 4 + b2 * alfa_i[2] ** 4 +
+            b3 * alfa_i[3] ** 4 + b4 * alfa_i[4] ** 4 + b[5] * alfa_i[5] ** 4 - 1/5]
 
     b[:-1] = np.array(*smp.linsolve(eqns, b0, b1, b2, b3, b4))
 
@@ -92,7 +91,6 @@ def step_2():
 
 def step_3():
     alfa_ij[5, 4] = gamma
-    alfa_ij[5, 5] = beta_ij[4, 5]
     # alfa51, alfa52, alfa53
     alfa51, alfa52, alfa53 = smp.symbols("alfa51, alfa52, alfa53")
 
@@ -125,8 +123,8 @@ def step_4():
             alfa43 *
             (omega_ij[3, 1] * alfa_i[1] ** 2 + omega_ij[3, 2] * alfa_i[2] ** 2 + omega_ij[3, 3] * alfa_i[3] ** 2) - 1,
             alfa40 + alfa41 + alfa42 + alfa43 - 1,
-            alfa40 * omega_ij[0].sum() + alfa41 * omega_ij[1].sum() + alfa42 * omega_ij[2].sum() +
-            alfa43 * omega_ij[3].sum() - 1]
+            alfa40 * omega_ij[0, :1].sum() + alfa41 * omega_ij[1, :2].sum() + alfa42 * omega_ij[2, :3].sum() +
+            alfa43 * omega_ij[3, :4].sum() - 1]
 
     alfa_ij[4, 0:4] = np.array(*smp.linsolve(eqns, alfa40, alfa41, alfa42, alfa43))
 
@@ -138,16 +136,15 @@ def step_5():
     eqns = [b[2] * alfa_i[2] * alfa21 * beta_i[1] + b[3] * alfa_i[3] * (alfa31 * beta_i[1] + alfa32 * beta_i[2]) +
             (b[4] + b[5]) * (1/2 - gamma) - 1/8 + gamma/3,
             b[2] * alfa_i[2] * alfa21 * omega_ij[1, 1] * alfa_i[1] ** 2 +
-            b[3] * alfa_i[3] * (alfa31 * (omega_ij[1, 1] * alfa_i[1] ** 2).sum()
-                                + alfa32 * (omega_ij[2, 1] * alfa_i[1] ** 2 + omega_ij[2, 2] * alfa_i[2] ** 2).sum()) +
+            b[3] * alfa_i[3] * (alfa31 * (omega_ij[1, 1] * alfa_i[1] ** 2)
+                                + alfa32 * (omega_ij[2, 1] * alfa_i[1] ** 2 + omega_ij[2, 2] * alfa_i[2] ** 2)) +
             (b[4] + b[5]) - 1/4,
-            alfa31 - 0.5]
+            b[2] * alfa_i[2] ** 2 * alfa21 * beta_i[1] +
+            b[3] * alfa_i[3] ** 2 * (alfa31 * beta_i[1] + alfa32 * beta_i[2]) +
+            b[4] * alfa_i[4] ** 2 * (alfa_ij[4] * beta_i).sum() +
+            b[5] * alfa_i[5] ** 2 * (alfa_ij[5] * beta_i).sum() - 1/10 + gamma/4]
 
-    alfa21, alfa31, alfa32 = np.array(*smp.linsolve(eqns, alfa21, alfa31, alfa32))
-
-    alfa_ij[2, 1] = alfa21
-    alfa_ij[3, 1] = alfa31
-    alfa_ij[3, 2] = alfa32
+    alfa_ij[2, 1], alfa_ij[3, 1], alfa_ij[3, 2] = np.array(*smp.linsolve(eqns, alfa21, alfa31, alfa32))
 
     # alfa20, alfa30
     alfa_ij[2, 0] = alfa_i[2] - alfa_ij[2, 1]
@@ -158,13 +155,26 @@ def step_5():
     gamma_ij = beta_ij - alfa_ij
 
 
-def write_RODAS_coefficients():
+def save_RODAS_coefficients():
     path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/alfa.csv')
     np.savetxt(path, alfa_ij)
     path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/gamma.csv')
     np.savetxt(path, gamma_ij)
     path = pathlib.Path('./Numerical Solution of Differential Equations/RODAS_coefficients/b.csv')
     np.savetxt(path, b)
+
+
+def checking():
+    inv_gamma_ij = np.linalg.inv(gamma_ij)
+    # for i in range(s):
+    #     for j in range(s):
+    #         if j > i:
+    #             inv_gamma_ij[i, j] = 0.
+
+    new_alfa_ij = np.dot(alfa_ij, inv_gamma_ij)
+    c_ij = np.diag(np.diag(gamma_ij) ** -1) - inv_gamma_ij
+
+    gamma_i = np.array([gamma_ij[:4].sum(axis=1)])
 
 
 def calculate_RODAS_coefficients():
@@ -174,4 +184,6 @@ def calculate_RODAS_coefficients():
     step_3()
     step_4()
     step_5()
-    write_RODAS_coefficients()
+    # save_RODAS_coefficients()
+    # checking()
+

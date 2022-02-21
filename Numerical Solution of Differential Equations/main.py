@@ -38,8 +38,8 @@ if __name__ == '__main__':
     # solve_DAE(start=0., end=0.2, step=0.0001, method="BEM")
     # solve_DAE(start=0., end=0.2, step=0.0001, method="ITRM")
     # solve_DAE(start=0., end=0.2, step=0.0001, method="SDIRKM")
-    solve_DAE(start=0., end=0.2, step=0.0001, method="ROSM")
+    # solve_DAE(start=0., end=0.2, step=0.0001, method="ROSM")
 
-    # calculate_RODAS_coefficients()
+    calculate_RODAS_coefficients()
 
     pass
