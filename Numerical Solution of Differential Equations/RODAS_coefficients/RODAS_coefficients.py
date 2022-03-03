@@ -65,9 +65,9 @@ def step_2():
     # b2beta21+b3beta31, b3beta32
     b2beta21b3beta31, b3beta32 = smp.symbols("b2beta21b3beta31, b3beta32")
 
-    eqns = [b2beta21b3beta31 * beta_i[1] + b3beta32 * beta_i[2] + b[3] * beta_ij[3, 3] * beta_i[3] +
-            (b[4] + b[5]) * (1/2 - 2 * gamma + gamma ** 2) - 1/6 + gamma - gamma ** 2,
-            b2beta21b3beta31 * alfa_i[1] ** 2 + b3beta32 * alfa_i[2] ** 2 + b[3] * beta_ij[3, 3] * alfa_i[3] ** 2 +
+    eqns = [b2beta21b3beta31 * beta_i[1] + b3beta32 * beta_i[2] + (b[4] + b[5]) *
+            (1/2 - 2 * gamma + gamma ** 2) - 1/6 + gamma - gamma ** 2,
+            b2beta21b3beta31 * alfa_i[1] ** 2 + b3beta32 * alfa_i[2] ** 2 +
             (b[4] + b[5]) * (1/3 - gamma) - 1/12 + gamma/3]
 
     b2beta21b3beta31, b3beta32 = np.array(*smp.linsolve(eqns, b2beta21b3beta31, b3beta32))
@@ -96,7 +96,7 @@ def step_3():
 
     eqns = [alfa51 * beta_i[1] + alfa52 * beta_i[2] + alfa53 * beta_i[3] - 1/2 + 2 * gamma - gamma ** 2,
             alfa51 * alfa_i[1] ** 2 + alfa52 * alfa_i[2] ** 2 + alfa53 * alfa_i[3] ** 2 - 1/3 + gamma,
-            alfa52 * beta_ij[2, 1] * beta_i[1] + alfa53 * (beta_ij[3, 1:4] * beta_i[1:4]).sum() -
+            alfa52 * beta_ij[2, 1] * beta_i[1] + alfa53 * (beta_ij[3, 1:3] * beta_i[1:3]).sum() -
             1/6 + 3/2 * gamma - 3 * gamma ** 2 + gamma ** 3]
 
     alfa_ij[5, 1:4] = np.array(*smp.linsolve(eqns, alfa51, alfa52, alfa53))
@@ -141,8 +141,8 @@ def step_5():
             (b[4] + b[5]) - 1/4,
             b[2] * alfa_i[2] ** 2 * alfa21 * beta_i[1] +
             b[3] * alfa_i[3] ** 2 * (alfa31 * beta_i[1] + alfa32 * beta_i[2]) +
-            b[4] * alfa_i[4] ** 2 * (alfa_ij[4] * beta_i).sum() +
-            b[5] * alfa_i[5] ** 2 * (alfa_ij[5] * beta_i).sum() - 1/10 + gamma/4]
+            b[4] * (alfa_ij[4] * beta_i).sum() +
+            b[5] * (alfa_ij[5] * beta_i).sum() - 1 / 10 + gamma / 4]
 
     alfa_ij[2, 1], alfa_ij[3, 1], alfa_ij[3, 2] = np.array(*smp.linsolve(eqns, alfa21, alfa31, alfa32))
 
@@ -166,15 +166,44 @@ def save_RODAS_coefficients():
 
 def checking():
     inv_gamma_ij = np.linalg.inv(gamma_ij)
-    # for i in range(s):
-    #     for j in range(s):
-    #         if j > i:
-    #             inv_gamma_ij[i, j] = 0.
 
     new_alfa_ij = np.dot(alfa_ij, inv_gamma_ij)
     c_ij = np.diag(np.diag(gamma_ij) ** -1) - inv_gamma_ij
 
     gamma_i = np.array([gamma_ij[:4].sum(axis=1)])
+
+    # print('inv_gamma_ij')
+    # print(inv_gamma_ij)
+    #
+    # print('new_alfa_ij')
+    # print(new_alfa_ij)
+    #
+    # print('c_ij')
+    # print(c_ij)
+    #
+    # print('gamma_i')
+    # print(gamma_i)
+    #
+    # print('alfa_i')
+    # print(alfa_i)
+    #
+    # print('alfa_ij')
+    # print(alfa_ij)
+    #
+    # print('beta_i')
+    # print(beta_i)
+    #
+    # print('beta_ij')
+    # print(beta_ij)
+    #
+    # print('gamma_ij')
+    # print(gamma_ij)
+    #
+    # print('omega_ij')
+    # print(omega_ij)
+    #
+    # print('b')
+    # print(b)
 
 
 def calculate_RODAS_coefficients():
@@ -184,6 +213,6 @@ def calculate_RODAS_coefficients():
     step_3()
     step_4()
     step_5()
-    # save_RODAS_coefficients()
+    save_RODAS_coefficients()
     # checking()
 
